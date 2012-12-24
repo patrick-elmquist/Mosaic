@@ -22,9 +22,9 @@ import Main.Library.LibItem;
 
 
 public class Mosaic {
-	private final static int SIDE = 15;
-	private final static int IMG_WIDTH	= SIDE;
-	private final static int IMG_HEIGHT	= SIDE;
+	protected final static int SIDE = 15;
+	protected final static int IMG_WIDTH	= SIDE;
+	protected final static int IMG_HEIGHT	= SIDE;
 	
 	private final static String FILENAME = "test2.jpg";
 	
@@ -171,15 +171,7 @@ public class Mosaic {
 		}
 	}
 	
-	/*
-	private BufferedImage resizeImage(BufferedImage bi) {
-		BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = resizedImage.createGraphics();
-		g.drawImage(bi, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
-		g.dispose();
-		return resizedImage;
-	}
-	*/
+	
 	
 	private BufferedImage copy(BufferedImage bi) {
 		 ColorModel cm = bi.getColorModel();

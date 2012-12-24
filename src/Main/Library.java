@@ -1,6 +1,7 @@
 package Main;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
@@ -53,9 +54,10 @@ public class Library {
 		
 		FileWriter fstream = new FileWriter(LIB_FILENAME);
 		BufferedWriter out = new BufferedWriter(fstream);
-		
+		int counter = 1;
+		int max = pics.length;
 		for (File file : pics) {
-			System.out.println("Analyzing..." + file.getName());
+			System.out.println("Analyzing picture..." + file.getName() + "(Pic " + counter + " of " + max + ")");
 			img = ImageIO.read(file);
 			int c = 0;
 			int r = 0;
@@ -90,6 +92,14 @@ public class Library {
 		out.close();
 	}
 	
+	private BufferedImage resizeImage(BufferedImage bi) {
+		BufferedImage resizedImage = new BufferedImage(Mosaic.IMG_WIDTH, Mosaic.IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = resizedImage.createGraphics();
+		g.drawImage(bi, 0, 0, Mosaic.IMG_WIDTH, Mosaic.IMG_HEIGHT, null);
+		g.dispose();
+		return resizedImage;
+	}
+	
 	private double colorDistance(Color c1, Color c2) {
 		double rmean = ( c1.getRed() + c2.getRed() )/2;
 	    int r = c1.getRed() - c2.getRed();
@@ -109,7 +119,7 @@ public class Library {
 		public LibItem(String name, Color color, Image img) {
 			this.path = name;
 			this.color = color;
-			this.img = img;
+//			this.img = img;
 		}
 		
 		public String getPath() {	return path;	}
