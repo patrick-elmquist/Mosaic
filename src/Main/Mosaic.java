@@ -6,15 +6,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -55,6 +55,42 @@ public class Mosaic {
 		
 		this.imgPanel = new ImagePanel(img);
 		this.secondPanel = new ImagePanel(img);
+
+		JButton btn_zoomIn = new JButton("zoomIn");
+		btn_zoomIn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				secondPanel.zoomIn();
+			}
+		});
+		
+		JButton btn_zoomOut = new JButton("zoomOut");
+		btn_zoomOut.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				secondPanel.zoomOut();
+			}
+		});
+		
+		JButton btn_zoomReset = new JButton("zoomReset");
+		btn_zoomReset.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				secondPanel.resetZoom();
+			}
+		});
+		
+		JFrame buttonFrame = new JFrame("ButtonFrame");
+		buttonFrame.setLayout(new GridLayout(1,3));
+		buttonFrame.add(btn_zoomIn);
+		buttonFrame.add(btn_zoomOut);
+		buttonFrame.add(btn_zoomReset);
+		buttonFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		buttonFrame.pack();
+		buttonFrame.setLocationRelativeTo(null);
+		buttonFrame.setAlwaysOnTop(true);
+		buttonFrame.setVisible(true);
+		
 		
 		this.frame = new JFrame("Mosaic");
 		frame.setLayout(new GridLayout(1,2));
@@ -184,19 +220,41 @@ public class Mosaic {
 		private static final long serialVersionUID = 4753305659422880547L;
 		private Image img;
 		private Dimension size;
+		private double zoom;
+		private double step;
+		
 		public ImagePanel(Image img) {
 			this.img = img;
 			this.size = new Dimension(img.getWidth(null),img.getHeight(null));
+			this.zoom = 1.0;
+			this.step = 0.2;
 			setPreferredSize(size);
 		}
 		
 		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			g.drawImage(img,0,0,null);
+			Graphics2D g2d = (Graphics2D) g;
+			super.paintComponent(g2d);
+			g2d.scale(zoom, zoom);
+			g2d.drawImage(img,0,0,null);
 		}
 		
 		public void updateImage(BufferedImage bi) {
 			img = bi;
+			updateUI();
+		}
+		
+		public void zoomIn() {
+			zoom += step;
+			updateUI();
+		}
+	
+		public void zoomOut() {
+			zoom -= step;
+			updateUI();
+		}
+		
+		public void resetZoom() {
+			zoom = 1.0;
 			updateUI();
 		}
 	}
