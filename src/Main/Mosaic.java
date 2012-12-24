@@ -22,11 +22,11 @@ import Main.Library.LibItem;
 
 
 public class Mosaic {
-	protected final static int SIDE = 15;
+	protected final static int SIDE = 10;
 	protected final static int IMG_WIDTH	= SIDE;
 	protected final static int IMG_HEIGHT	= SIDE;
 	
-	private final static String FILENAME = "test2.jpg";
+	private final static String FILENAME = "text.png";
 	
 	private JFrame frame;
 	private ImagePanel imgPanel;
