@@ -26,7 +26,7 @@ public class Mosaic {
 	private final static int IMG_WIDTH	= SIDE;
 	private final static int IMG_HEIGHT	= SIDE;
 	
-	private final static String FILENAME = "test.jpg";
+	private final static String FILENAME = "test2.jpg";
 	
 	private JFrame frame;
 	private ImagePanel imgPanel;
@@ -38,9 +38,7 @@ public class Mosaic {
 
 	public Mosaic() {
 		init();
-		try {
-			buildLibrary();
-		} catch (IOException e) {	e.printStackTrace();	}
+		
 //		simpleMosaic();
 		advancedMosaic();
 	}
@@ -70,54 +68,7 @@ public class Mosaic {
 		this.lib = new Library();
 	}
 	
-	private void buildLibrary() throws IOException {
-		System.out.println("Building library...");
-		BufferedImage img;
-		File dir = null;
-//		try {
-//			dir = new File(this.getClass().getResource("Library/").toURI());
-			dir = new File("E:/Pictures/Wallpaper");
-//		} catch (URISyntaxException e) {	e.printStackTrace();	}
-		
-		File[] pics = dir.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".png");
-			}
-		});
-		
-		for (File file : pics) {
-			System.out.println("Analyzing..." + file.getName());
-			img = ImageIO.read(file);
-//			img = resizeImage(img);
-			int c = 0;
-			int r = 0;
-			int g = 0;
-			int b = 0;
-			for (int k = 0; k < img.getWidth(); k++) {
-				for (int l = 0; l < img.getHeight(); l++) {
-					int rgb = img.getRGB(k, l);
-					r += (rgb >> 16) & 0xFF;
-					g += (rgb >> 8) & 0xFF;
-					b += (rgb) & 0xFF;
-					c++;
-				}
-			}
-			
-			r /= c;
-			g /= c;
-			b /= c;
-
-			int rgb = r;
-			rgb = (rgb << 8) + g;
-			rgb = (rgb << 8) + b;
-			
-			Color color = new Color(rgb);
-			
-			lib.addImage(file.getName(), color, img);
-		}
-	}
-	
-	private void simpleMosaic() {
+	private void pixelation() {
 		BufferedImage bi = copy((BufferedImage) img);
 		secondPanel.updateImage(bi);
 		
@@ -171,8 +122,6 @@ public class Mosaic {
 		
 		int ws = SIDE;
 		int hs = SIDE;
-		Random rnd = new Random();
-//		LibItem[] pics = lib.getLibrary();
 		for (int i = 0; i < width; i+=SIDE) {
 			for (int j = 0; j < height; j+=SIDE) {
 				int r = 0;
@@ -204,7 +153,6 @@ public class Mosaic {
 				rgb = (rgb << 8) + g;
 				rgb = (rgb << 8) + b;
 
-//				int rand = rnd.nextInt(pics.length);
 				Color temp = new Color(rgb);
 				LibItem item = lib.findImage(temp);
 				
@@ -213,7 +161,6 @@ public class Mosaic {
 
 				Graphics2D grap = bi.createGraphics();
 				
-//				grap.drawImage(item.getImg(), i,j, null);
 				grap.drawImage(item.getImg(), i,j,IMG_WIDTH,IMG_HEIGHT, null);
 				grap.setColor(temp);
 				grap.setStroke(new BasicStroke(1));
@@ -224,6 +171,7 @@ public class Mosaic {
 		}
 	}
 	
+	/*
 	private BufferedImage resizeImage(BufferedImage bi) {
 		BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = resizedImage.createGraphics();
@@ -231,6 +179,7 @@ public class Mosaic {
 		g.dispose();
 		return resizedImage;
 	}
+	*/
 	
 	private BufferedImage copy(BufferedImage bi) {
 		 ColorModel cm = bi.getColorModel();

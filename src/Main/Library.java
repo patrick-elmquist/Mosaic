@@ -2,17 +2,26 @@ package Main;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
+
 public class Library {
+	private static final String LIB_FILENAME = "lib.txt";
 	private HashMap<Color, LibItem> lib;
 	
 	public Library() {
 		this.lib = new HashMap<Color, LibItem>();
-	}
-	
-	public void addImage(String name, Color color, Image img) {
-		this.lib.put(color, new LibItem(name, color, img));
+		
+		try {
+			buildLibrary();
+		} catch (IOException e) {	e.printStackTrace();	}
 	}
 	
 	public LibItem findImage(Color c) {
@@ -29,6 +38,58 @@ public class Library {
 		return lib.get(closest);
 	}
 	
+	private void buildLibrary() throws IOException {
+		long before = System.currentTimeMillis();
+		System.out.println("Building library...");
+		BufferedImage img;
+//		File dir = new File("E:/Pictures/Wallpaper");
+		File dir = new File("D:/Pictures");
+		
+		File[] pics = dir.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".png");
+			}
+		});
+		
+		FileWriter fstream = new FileWriter(LIB_FILENAME);
+		BufferedWriter out = new BufferedWriter(fstream);
+		
+		for (File file : pics) {
+			System.out.println("Analyzing..." + file.getName());
+			img = ImageIO.read(file);
+			int c = 0;
+			int r = 0;
+			int g = 0;
+			int b = 0;
+			for (int k = 0; k < img.getWidth(); k++) {
+				for (int l = 0; l < img.getHeight(); l++) {
+					int rgb = img.getRGB(k, l);
+					r += (rgb >> 16) & 0xFF;
+					g += (rgb >> 8) & 0xFF;
+					b += (rgb) & 0xFF;
+					c++;
+				}
+			}
+			
+			r /= c;
+			g /= c;
+			b /= c;
+
+			int rgb = r;
+			rgb = (rgb << 8) + g;
+			rgb = (rgb << 8) + b;
+			
+			Color color = new Color(rgb);
+			lib.put(color, new LibItem(file.getPath(), color, img));
+			out.write(color.getRGB() + "*" + file.getPath() + "\n");
+			out.flush();
+		}
+		long after = System.currentTimeMillis();
+		System.out.println("Finished building library! " + lib.size() + " pictures added (" + (after-before)/1000.0/60 + " minutes)");
+		
+		out.close();
+	}
+	
 	private double colorDistance(Color c1, Color c2) {
 		double rmean = ( c1.getRed() + c2.getRed() )/2;
 	    int r = c1.getRed() - c2.getRed();
@@ -41,17 +102,17 @@ public class Library {
 	}
 	
 	class LibItem {
-		private String name;
+		private String path;
 		private Color color;
 		private Image img;
 		
 		public LibItem(String name, Color color, Image img) {
-			this.name = name;
+			this.path = name;
 			this.color = color;
 			this.img = img;
 		}
 		
-		public String getName() {	return name;	}
+		public String getPath() {	return path;	}
 
 		public Color getColor() {	return color;	}
 
