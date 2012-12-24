@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -20,11 +23,42 @@ public class Library {
 	public Library() {
 		this.lib = new HashMap<Color, LibItem>();
 		
-		try {
-			buildLibrary();
-		} catch (IOException e) {	e.printStackTrace();	}
+		File file = new File(LIB_FILENAME);
+		
+		if(file.exists()) {
+			System.out.println("Building library from file...");
+			createLibraryFromFile(file);
+			System.out.println("Finished building library from file!");
+		} else {
+			System.out.println("Building library from filesystem...");
+			try {
+				buildLibrary();
+			} catch (IOException e) {	e.printStackTrace();	}
+		}
+		
 	}
 	
+	private void createLibraryFromFile(File file) {
+		BufferedReader br = null;
+		
+		try {
+			br = new BufferedReader(new FileReader(file));
+			String line;
+			
+			while((line = br.readLine()) != null) {
+				String[] split = line.split("*");
+				Color c = new Color(Integer.parseInt(split[0]));
+				lib.put(c, new LibItem(split[1], c, null));
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 	public LibItem findImage(Color c) {
 		double min = Double.MAX_VALUE;
 		double distance = -1;
@@ -57,7 +91,7 @@ public class Library {
 		int counter = 1;
 		int max = pics.length;
 		for (File file : pics) {
-			System.out.println("Analyzing picture..." + file.getName() + "(Pic " + counter + " of " + max + ")");
+			System.out.println("Analyzing picture..." + file.getName() + " (Pic " + counter + " of " + max + ")");
 			img = ImageIO.read(file);
 			int c = 0;
 			int r = 0;
@@ -116,8 +150,8 @@ public class Library {
 		private Color color;
 		private Image img;
 		
-		public LibItem(String name, Color color, Image img) {
-			this.path = name;
+		public LibItem(String path, Color color, Image img) {
+			this.path = path;
 			this.color = color;
 //			this.img = img;
 		}
@@ -126,7 +160,20 @@ public class Library {
 
 		public Color getColor() {	return color;	}
 
-		public Image getImg()	{	return img;		}
+		public Image getImg()	{
+			if(this.img == null) {
+				Image image = null;
+				try {
+					image = ImageIO.read(new File(path));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				img = image;
+				return image;
+			} else {
+				return img;
+			}
+		}
 	}
 
 }
