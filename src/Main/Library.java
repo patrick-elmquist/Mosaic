@@ -28,11 +28,11 @@ public class Library {
 		File file = new File(LIB_FILENAME);
 		
 		if(file.exists()) {
-			System.out.println("Building library from file...");
+			System.out.print("Building library from file...");
 			createLibraryFromFile(file);
 			System.out.println("Finished building library from file!");
 		} else {
-			System.out.println("Building library from filesystem...");
+			System.out.print("Building library from filesystem...");
 			try {
 				buildLibrary();
 			} catch (IOException e) {	e.printStackTrace();	}
@@ -76,6 +76,18 @@ public class Library {
 					closest = color;
 				}
 			}
+//			System.out.println(min);
+//			if(min > 150) {
+//				BufferedImage b = new BufferedImage(Mosaic.IMG_WIDTH, Mosaic.IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+//				Graphics2D g2d = (Graphics2D) b.getGraphics();
+//				g2d.setColor(c);
+//				g2d.drawRect(0, 0, Mosaic.IMG_WIDTH, Mosaic.IMG_HEIGHT);
+//				LibItem item = new LibItem(null, c);
+//				item.img = b;
+//				usedImgs.put(c, item);
+//				return item;
+//			}
+				
 			usedImgs.put(c, lib.get(closest));
 			return lib.get(closest);
 		}

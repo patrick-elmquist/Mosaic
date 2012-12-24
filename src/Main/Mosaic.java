@@ -6,17 +6,20 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import Main.Library.LibItem;
 
@@ -26,7 +29,7 @@ public class Mosaic {
 	protected final static int IMG_WIDTH	= SIDE;
 	protected final static int IMG_HEIGHT	= SIDE;
 	
-	private final static String FILENAME = "text.png";
+	private final static String FILENAME = "test2.jpg";
 	
 	private JFrame frame;
 	private ImagePanel imgPanel;
@@ -56,6 +59,8 @@ public class Mosaic {
 		this.imgPanel = new ImagePanel(img);
 		this.secondPanel = new ImagePanel(img);
 
+	
+		
 		JButton btn_zoomIn = new JButton("zoomIn");
 		btn_zoomIn.addActionListener(new ActionListener() {
 			@Override
@@ -80,24 +85,36 @@ public class Mosaic {
 			}
 		});
 		
+		JButton btn_export = new JButton("export");
+		btn_export.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				secondPanel.export();
+			}
+		});
+		
+		
 		JFrame buttonFrame = new JFrame("ButtonFrame");
-		buttonFrame.setLayout(new GridLayout(1,3));
+		buttonFrame.setLayout(new GridLayout(1,4));
 		buttonFrame.add(btn_zoomIn);
 		buttonFrame.add(btn_zoomOut);
 		buttonFrame.add(btn_zoomReset);
+		buttonFrame.add(btn_export);
 		buttonFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		buttonFrame.pack();
 		buttonFrame.setLocationRelativeTo(null);
 		buttonFrame.setAlwaysOnTop(true);
 		buttonFrame.setVisible(true);
 		
-		
+		JScrollPane scrollPane = new JScrollPane(secondPanel);
 		this.frame = new JFrame("Mosaic");
 		frame.setLayout(new GridLayout(1,2));
 //		frame.add(imgPanel);
-		frame.add(secondPanel);
+		frame.add(scrollPane);
+		frame.setSize(new Dimension(1280,800));
+		frame.setMaximumSize(Toolkit.getDefaultToolkit().getScreenSize());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
+//		frame.pack(); // Sätter size efter alla komponenter
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
@@ -153,6 +170,7 @@ public class Mosaic {
 	}
 	
 	private void advancedMosaic() {
+		System.out.println("Starting mosaic conversion...");
 		BufferedImage bi = copy((BufferedImage) img);
 		secondPanel.updateImage(bi);
 		
@@ -205,6 +223,7 @@ public class Mosaic {
 				secondPanel.updateUI();
 			}
 		}
+		System.out.println("Finished mosaic conversion!");
 	}
 	
 	
@@ -228,9 +247,20 @@ public class Mosaic {
 			this.size = new Dimension(img.getWidth(null),img.getHeight(null));
 			this.zoom = 1.0;
 			this.step = 0.2;
+			
 			setPreferredSize(size);
 		}
 		
+		public void export() {
+			try {
+				File output = new File("saved.png");
+				ImageIO.write((BufferedImage) img, "png", output);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			System.out.println("Picture saved to saved.png");
+		}
+
 		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g;
 			super.paintComponent(g2d);
