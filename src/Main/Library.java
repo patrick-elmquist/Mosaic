@@ -76,17 +76,18 @@ public class Library {
 					closest = color;
 				}
 			}
-//			System.out.println(min);
-//			if(min > 150) {
-//				BufferedImage b = new BufferedImage(Mosaic.IMG_WIDTH, Mosaic.IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-//				Graphics2D g2d = (Graphics2D) b.getGraphics();
-//				g2d.setColor(c);
-//				g2d.drawRect(0, 0, Mosaic.IMG_WIDTH, Mosaic.IMG_HEIGHT);
-//				LibItem item = new LibItem(null, c);
-//				item.img = b;
-//				usedImgs.put(c, item);
-//				return item;
-//			}
+			System.out.println(min);
+			if(min > 150) {
+				BufferedImage b = new BufferedImage(Mosaic.IMG_WIDTH, Mosaic.IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+				Graphics2D g2d = (Graphics2D) b.getGraphics();
+				g2d.setColor(c);
+				g2d.fillRect(0, 0, Mosaic.IMG_WIDTH, Mosaic.IMG_HEIGHT);
+				LibItem item = new LibItem(null, c);
+				item.img = b;
+				usedImgs.put(c, item);
+				g2d.dispose();
+				return item;
+			}
 				
 			usedImgs.put(c, lib.get(closest));
 			return lib.get(closest);

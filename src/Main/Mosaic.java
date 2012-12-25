@@ -25,7 +25,7 @@ import Main.Library.LibItem;
 
 
 public class Mosaic {
-	protected final static int SIDE = 10;
+	protected final static int SIDE = 25;
 	protected final static int IMG_WIDTH	= SIDE;
 	protected final static int IMG_HEIGHT	= SIDE;
 	
@@ -111,7 +111,13 @@ public class Mosaic {
 		frame.setLayout(new GridLayout(1,2));
 //		frame.add(imgPanel);
 		frame.add(scrollPane);
-		frame.setSize(new Dimension(1280,800));
+		
+		
+		if(img.getWidth(null) < 1280 && img.getHeight(null) < 800) {
+			frame.setSize(img.getWidth(null), img.getHeight(null));
+			frame.pack();
+		} else
+			frame.setSize(new Dimension(1280,800));
 		frame.setMaximumSize(Toolkit.getDefaultToolkit().getScreenSize());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		frame.pack(); // Sätter size efter alla komponenter
